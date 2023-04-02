@@ -1,6 +1,6 @@
-FROM hotspot:latest
-RUN mkdir -p /usr/local/organizationservice
-ADD @project.build.finalName@.jar /usr/local/organizationservice/
-ADD run.sh run.sh
-RUN chmod +x run.sh
-CMD ./run.sh
+FROM openjdk:11-jre-slim
+COPY target/*.jar /app/app.jar
+COPY src/main/resources/application.yml /app/application.yml
+WORKDIR /app
+CMD ["java", "-jar", "/app/app.jar", "-Duser.timezone=Asia/Shanghai", "--spring.config.location=/app/application.yml"]
+EXPOSE 8086
