@@ -1,17 +1,22 @@
 pipeline {
-    agent any  	
-
+    agent any
     stages {
-        stage('Hello') {
-            steps {
-                echo 'Hello World'
-            }
+        stage('test') {
+             steps{
+		        sh 'mvn test'
+             }
         }
-        // 这里的hello2 是我加的，就是说明，这是stages下的第二个任务 ,就是在pipeline中加单行注释 用 // 就行
-        stage('Hello2') {
+        stage('build') {
             steps {
-                echo 'Hello World'
-            }
+                sh 'mvn clean package'
+                sh 'docker build -t hotspot:latest .'
+	        }
+        }
+        stage('deploy') {
+            steps {
+                sh 'docker rm -f hotspot'
+                sh 'docker run -d --name hotspot -p 8086:8086 --net=sw3 hotspot:latest'
+	        }
         }
     }
 }
