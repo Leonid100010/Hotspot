@@ -9,5 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SentiStrength {
 
-    private double trinaryScore;
+    private Integer pos;
+
+    private Integer neg;
+
+    private Integer trinary;
 }
