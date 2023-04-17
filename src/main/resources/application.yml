@@ -4,3 +4,10 @@ spring:
   application:
     name: hotspot
 
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://123.60.87.104:8120/eureka/
+  instance:
+    prefer-ip-address: true
