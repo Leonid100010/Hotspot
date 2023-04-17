@@ -1,5 +1,6 @@
 package com.nju.edu.cn.service;
 
+import com.nju.edu.cn.service.serviceImpl.Translate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,15 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class TranslateTest {
 
-    TranslateService translateService;
+    Translate translate;
 
     @Autowired
-    public TranslateTest(TranslateService translateService) {
-        this.translateService = translateService;
+    public TranslateTest(Translate translate) {
+        this.translate = translate;
     }
 
     @Test
     public void testChineseToEng(){
-        System.out.println(translateService.chineseToEng("男子一天狂刷7大景点 次日准时上班。"));
+        System.out.println(translate.chineseToEng("男子一天狂刷7大景点 次日准时上班。"));
     }
 }
