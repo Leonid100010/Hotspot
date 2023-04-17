@@ -1,4 +1,4 @@
-package com.nju.edu.cn.service;
+package com.nju.edu.cn.service.feign;
 
 
 import com.nju.edu.cn.entity.SingleText;

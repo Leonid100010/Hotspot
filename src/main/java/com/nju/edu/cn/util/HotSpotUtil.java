@@ -10,7 +10,6 @@ public class HotSpotUtil {
 
     /**
      * 格式化待计算待文本，例如除去非法字符，给双引号加转义字符；
-     * 目前仅给双引号加转义字符
      * @param text
      * @return
      */

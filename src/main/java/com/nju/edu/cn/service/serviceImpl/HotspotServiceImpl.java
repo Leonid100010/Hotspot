@@ -5,7 +5,6 @@ import com.nju.edu.cn.entity.HotSpot;
 import com.nju.edu.cn.entity.HotSpotEntry;
 import com.nju.edu.cn.entity.HotSpotVO;
 import com.nju.edu.cn.service.*;
-import com.nju.edu.cn.util.HotSpotUtil;
 import com.nju.edu.cn.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,10 @@ public class HotspotServiceImpl implements HotspotService {
 
     Translate translate;
 
-    SentiStrengthService sentiStrengthService;
+    SentiStrengthServiceEnter sentiStrengthService;
 
     @Autowired
-    public HotspotServiceImpl(SourceHotData sourceHotData, Translate translate, SentiStrengthService sentiStrengthService) {
+    public HotspotServiceImpl(SourceHotData sourceHotData, Translate translate, SentiStrengthServiceEnter sentiStrengthService) {
         this.sourceHotData = sourceHotData;
         this.sentiStrengthService = sentiStrengthService;
         this.translate = translate;
@@ -61,7 +60,7 @@ public class HotspotServiceImpl implements HotspotService {
 
             //计算情绪指标
             entry.setSentiStrength(
-                    sentiStrengthService.calculateTrinary(HotSpotUtil.format(toCal))
+                    sentiStrengthService.calculateTrinary(toCal)
             );
         }
 

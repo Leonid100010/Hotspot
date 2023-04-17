@@ -1,6 +1,5 @@
 package com.nju.edu.cn.service;
 
-import com.nju.edu.cn.service.serviceImpl.Translate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,12 +7,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class SentiStrengthServiceTest {
 
-    SentiStrengthService sentiStrengthService;
+    SentiStrengthServiceEnter sentiStrengthService;
 
     Translate translateService;
 
     @Autowired
-    public SentiStrengthServiceTest(SentiStrengthService sentiStrengthService, Translate translateService) {
+    public SentiStrengthServiceTest(SentiStrengthServiceEnter sentiStrengthService, Translate translateService) {
         this.sentiStrengthService = sentiStrengthService;
         this.translateService = translateService;
     }

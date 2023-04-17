@@ -1,8 +1,8 @@
-package com.nju.edu.cn.service.serviceImpl;
+package com.nju.edu.cn.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.nju.edu.cn.entity.SingleText;
-import com.nju.edu.cn.service.TranslateService;
+import com.nju.edu.cn.service.feign.TranslateService;
 import com.nju.edu.cn.util.JsonUtil;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,5 @@
 package com.nju.edu.cn.service;
 
-import com.nju.edu.cn.service.serviceImpl.Translate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
