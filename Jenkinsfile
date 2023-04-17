@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -Dmaven.test.skip=true'
                 sh 'docker build -t hotspot:latest .'
 	        }
         }

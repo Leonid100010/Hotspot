@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.nju.edu.cn.entity.HotSpot;
 import com.nju.edu.cn.entity.HotSpotEntry;
 import com.nju.edu.cn.entity.HotSpotVO;
-import com.nju.edu.cn.entity.SentiStrength;
 import com.nju.edu.cn.service.HotspotService;
 import com.nju.edu.cn.service.SentiStrengthService;
 import com.nju.edu.cn.service.SourceHotData;
@@ -13,7 +12,6 @@ import com.nju.edu.cn.util.HotSpotUtil;
 import com.nju.edu.cn.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class HotspotServiceImpl implements HotspotService {
@@ -46,23 +44,24 @@ public class HotspotServiceImpl implements HotspotService {
 
         //进行情绪分析
         for(HotSpotEntry entry:  hotSpot.getHotSpotEntryList()){
-            //翻译
-            //TODO: 这里还没解决拼接字符串的格式问题，仅使用标题进行计算
+            //拼接字符串
+            String toTrans;
             if(entry.getTitle() == null || entry.getTitle().isEmpty()) {
-                //TODO：空值问题
-                entry.setSentiStrength(new SentiStrength(1,-1,0));
-                continue;
+                //如果title为空
+                toTrans = entry.getDescribe();
+            }else{
+                toTrans = entry.getTitle() + " " + entry.getDescribe();
             }
-            String toCal = translateService.chineseToEng(entry.getTitle());
-            if(toCal == null || toCal.isEmpty()) {
-                entry.setSentiStrength(new SentiStrength(1,-1,0));
-                continue;
-            }
+            //翻译
+            String toCal = translateService.chineseToEng(toTrans);
+
             //计算情绪指标
             entry.setSentiStrength(
                     sentiStrengthService.calculateTrinary(HotSpotUtil.format(toCal))
             );
         }
+
+        System.out.println("站点 " + station + " 的热门条目共有 " + hotSpot.getHotSpotEntryList().size() + " 个");
 
         hotSpot.setAvgNeg();
         hotSpot.setAvgPos();

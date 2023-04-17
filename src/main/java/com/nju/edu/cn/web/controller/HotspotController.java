@@ -25,6 +25,6 @@ public class HotspotController {
     @GetMapping("/getHotSpot")
     public Response getHotSpot(@RequestParam("station") String station){
 
-        return new Response("200", "success", hotspotService.getHotSpotByStation(station));
+        return Response.buildSuccess(hotspotService.getHotSpotByStation(station));
     }
 }
