@@ -70,8 +70,9 @@ public class HotSpot {
      */
     public void setAvgTrinary(){
 
-        this.avgNeg = calSentiAvgParam(0);
+        this.avgTrinary = calSentiAvgParam(0);
     }
+
 
     public double calSentiAvgParam(int flag){
         double averageInit;

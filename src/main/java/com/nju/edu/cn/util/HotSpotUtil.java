@@ -8,10 +8,18 @@ public class HotSpotUtil {
 
     public static final char[] flags = new char[]{'#'};
 
+    /**
+     * 格式化待计算待文本，例如除去非法字符，给双引号加转义字符；
+     * 目前仅给双引号加转义字符
+     * @param text
+     * @return
+     */
     public static String format(String text){
         StringBuilder sb = new StringBuilder("");
         for(int i=0;i<text.length();i++){
-            if( hasChar(text.charAt(i))) continue;
+            if(text.charAt(i) == '\"'){
+                sb.append('\\');
+            }
             sb.append(text.charAt(i));
         }
         return sb.toString();

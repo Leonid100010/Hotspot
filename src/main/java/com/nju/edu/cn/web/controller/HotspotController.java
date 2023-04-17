@@ -18,13 +18,13 @@ public class HotspotController {
     }
 
     /**
-     * Hotspot主接口 TODO
+     * Hotspot主接口
      * @param station 目标站点
      * @return
      */
     @GetMapping("/getHotSpot")
     public Response getHotSpot(@RequestParam("station") String station){
 
-        return new Response("200", "success", hotspotService.getHotSpotByStation(station));
+        return Response.buildSuccess(hotspotService.getHotSpotByStation(station));
     }
 }

@@ -18,8 +18,9 @@ public class SentiStrengthServiceImpl implements SentiStrengthService {
 
         JSONObject sentiObject = JsonUtil.strToJson(sentiRes);
 
-        SentiStrength sentiStrength = JSON.parseObject(sentiObject.toJSONString(), SentiStrength.class);
         //转化为Java对象
-        return sentiStrength;
+        return JSON.parseObject(sentiObject.toJSONString(), SentiStrength.class);
+
+
     }
 }

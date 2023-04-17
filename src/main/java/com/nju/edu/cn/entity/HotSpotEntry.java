@@ -29,8 +29,6 @@ public class HotSpotEntry {
      */
     private String hot;
 
-
-
     /**
      * url
      */
@@ -42,14 +40,13 @@ public class HotSpotEntry {
     private SentiStrength sentiStrength;
 
 
-    public double getSentiStrengthPos(){ return sentiStrength.getPos() == null? 0.0: sentiStrength.getPos();}
+    public double getSentiStrengthPos(){ return sentiStrength.getPos();}
 
     public double getSentiStrengthNeg() {
-        System.out.println("title is:" + title);
-        return  sentiStrength.getNeg() == null? 0.0: sentiStrength.getNeg();
+        return   sentiStrength.getNeg();
     }
 
-    public double getSentiStrengthTrinary() { return sentiStrength.getTrinary() == null? 0.0: sentiStrength.getTrinary(); }
+    public double getSentiStrengthTrinary() { return  sentiStrength.getTrinary(); }
 
 
     public void setByHotSpotEntryVO(HotSpotEntryVO hseVO){
