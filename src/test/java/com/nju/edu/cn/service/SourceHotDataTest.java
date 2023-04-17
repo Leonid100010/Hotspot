@@ -8,10 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.annotation.Resource;
 
 @SpringBootTest
-public class SourceHotDataTest {
+class SourceHotDataTest {
 
     SourceHotData sourceHotData;
 
@@ -21,10 +20,8 @@ public class SourceHotDataTest {
     }
 
 
-
-
     @Test
-    public void testGenerateHotSpotVO(){
+    void testGenerateHotSpotVO(){
         JSONObject jsonObject = JsonUtil.strToJson(sourceHotData.getHotDataByStation("baidu"));
         HotSpotVO hotSpotVO = sourceHotData.generateHotSpotVO(jsonObject);
 
@@ -34,7 +31,7 @@ public class SourceHotDataTest {
     }
 
     @Test
-    public void testGetHotDataByStation(){
+    void testGetHotDataByStation(){
         System.out.println(
                 sourceHotData.getHotDataByStation("baidu")
         );

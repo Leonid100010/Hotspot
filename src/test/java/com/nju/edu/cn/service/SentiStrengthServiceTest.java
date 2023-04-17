@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class SentiStrengthServiceTest {
+class SentiStrengthServiceTest {
 
     SentiStrengthService sentiStrengthService;
 
@@ -18,7 +18,7 @@ public class SentiStrengthServiceTest {
     }
 
     @Test
-    public void testCalculateTrinary(){
+    void testCalculateTrinary(){
         String text = translateService.chineseToEng("男子一天狂刷7大景点 次日准时上班。");
         System.out.println(
                 sentiStrengthService.calculateTrinary(text)

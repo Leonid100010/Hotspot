@@ -17,17 +17,13 @@ public class SourceHotDataImpl implements SourceHotData {
 
     /**
      * 获取原始热点数据
-     * //TODO：不同的站点在这里区分
+     * TODO：不同的站点在这里区分
      * @param station 站点
      * @return
      */
     @Override
     public String getHotDataByStation(String station) {
-
-        String sourceData = OkHttp.get("https://api.vvhan.com/api/hotlist?type=baiduRD");
-
-
-        return sourceData;
+        return OkHttp.get("https://api.vvhan.com/api/hotlist?type=baiduRD");
     }
 
     @Override
@@ -41,7 +37,6 @@ public class SourceHotDataImpl implements SourceHotData {
         JSONArray hotEntries = (JSONArray) jsonObject.get("data");
         List<HotSpotEntryVO> hotSpotEntryVOs = JSONArray.parseArray(hotEntries.toString(), HotSpotEntryVO.class);
         hotSpot.setHotSpotEntryVOList(hotSpotEntryVOs);
-
 
 
         return hotSpot;

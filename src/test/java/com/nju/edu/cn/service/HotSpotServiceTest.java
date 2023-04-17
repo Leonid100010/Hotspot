@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class HotSpotServiceTest {
+class HotSpotServiceTest {
 
     HotspotService hotspotService;
 
@@ -15,7 +15,7 @@ public class HotSpotServiceTest {
     }
 
     @Test
-    public void testGetHotSpotByStation(){
+    void testGetHotSpotByStation(){
         System.out.println(hotspotService.getHotSpotByStation("baidu"));
     }
 }
