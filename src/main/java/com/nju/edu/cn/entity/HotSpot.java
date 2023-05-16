@@ -114,6 +114,12 @@ public class HotSpot {
         }
     }
 
+    public void setHotSpotEntryListAll(List<HotSpotEntry> hotSpotEntryList){
+        this.hotSpotEntryList = hotSpotEntryList;
+    }
+
+
+
 
 
 

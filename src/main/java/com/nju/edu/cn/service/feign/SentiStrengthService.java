@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
-@FeignClient(name="sentistrength", url="http://123.60.87.104:8085")
+@FeignClient(name="sentistrength", url="http://124.70.100.197:8085")
 public interface SentiStrengthService {
 
     @PostMapping("/analyse/trinaryAnalyse")

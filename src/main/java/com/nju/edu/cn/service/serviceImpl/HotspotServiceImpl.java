@@ -1,7 +1,9 @@
 package com.nju.edu.cn.service.serviceImpl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.nju.edu.cn.cache.HotSpotCache;
 import com.nju.edu.cn.entity.HotSpot;
+import com.nju.edu.cn.entity.HotSpotCacheItem;
 import com.nju.edu.cn.entity.HotSpotEntry;
 import com.nju.edu.cn.entity.HotSpotVO;
 import com.nju.edu.cn.service.*;
@@ -20,15 +22,27 @@ public class HotspotServiceImpl implements HotspotService {
 
     SentiStrengthServiceEnter sentiStrengthService;
 
+    HotSpotCache hotSpotCache;
+
     @Autowired
-    public HotspotServiceImpl(SourceHotData sourceHotData, Translate translate, SentiStrengthServiceEnter sentiStrengthService) {
+    public HotspotServiceImpl(SourceHotData sourceHotData, Translate translate,
+                              SentiStrengthServiceEnter sentiStrengthService, HotSpotCache hotSpotCache) {
         this.sourceHotData = sourceHotData;
         this.sentiStrengthService = sentiStrengthService;
         this.translate = translate;
+        this.hotSpotCache = hotSpotCache;
     }
 
     @Override
     public HotSpot getHotSpotByStation(String station) {
+        //检查缓存
+        HotSpot hotSpotCa = hotSpotCache.exist(station);
+        if(hotSpotCa != null){
+            log.info("站点 " + station + " 缓存命中!");
+            return hotSpotCa;
+        }
+        log.info("站点 " + station + " 缓存未命中");
+
         //获取源数据
         log.info("获取热点源数据中......");
         JSONObject sourceDataObject = JsonUtil.strToJson(sourceHotData.getHotDataByStation(station));
@@ -36,6 +50,7 @@ public class HotspotServiceImpl implements HotspotService {
         HotSpotVO hotSpotVO = sourceHotData.generateHotSpotVO(sourceDataObject);
 
         log.info("站点 " + station + " 的热门条目共有 " + hotSpotVO.getHotSpotEntryVOList().size() + " 个");
+
 
 
         HotSpot hotSpot  = new HotSpot();
@@ -70,6 +85,10 @@ public class HotspotServiceImpl implements HotspotService {
         hotSpot.setAvgTrinary();
 
         log.info("站点： " + station + " 分析结束");
+
+        //加入缓存
+        hotSpotCache.setHotSpotCache(hotSpot, station);
+
         return hotSpot;
     }
 }

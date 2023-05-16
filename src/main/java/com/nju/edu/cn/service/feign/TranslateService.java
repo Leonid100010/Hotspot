@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
-@FeignClient(name="translate", url="http://123.60.87.104:9100")
+@FeignClient(name="translate", url="http://124.70.100.197:9100")
 public interface TranslateService {
 
     @PostMapping("/translate/single")

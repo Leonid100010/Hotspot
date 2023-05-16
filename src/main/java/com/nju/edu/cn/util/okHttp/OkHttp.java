@@ -29,7 +29,11 @@ public class OkHttp {
      * @return
      */
     public static String get(String url){
-        OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient okHttpClient = new OkHttpClient()
+                .newBuilder()
+                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.getX509TrustManager()) //解决安全证书问题
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
+                .build();
         Request request = new Request.Builder()
                 .url(url)
                 .build();

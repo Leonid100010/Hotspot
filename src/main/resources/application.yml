@@ -3,11 +3,19 @@ server:
 spring:
   application:
     name: hotspot
+  redis:
+    host: 121.36.46.123
+    port: 6379
+    database: 0
+
 
 
 eureka:
   client:
     service-url:
-      defaultZone: http://123.60.87.104:8120/eureka/
+      defaultZone: http://124.70.100.197:8120/eureka/
   instance:
     prefer-ip-address: true
+
+
+
