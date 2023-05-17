@@ -10,7 +10,7 @@ pipeline {
         stage('deploy') {
             steps {
                 sh 'docker rm -f hotspot'
-                sh 'docker run -d --name hotspot -p 8086:8086 --net=sw3 hotspot:latest'
+                sh 'docker run -d --restart=always --name hotspot -p 8086:8086 --net=sw3 hotspot:latest '
 	        }
         }
     }

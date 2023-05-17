@@ -3,7 +3,6 @@ package com.nju.edu.cn.service.serviceImpl;
 import com.alibaba.fastjson.JSONObject;
 import com.nju.edu.cn.cache.HotSpotCache;
 import com.nju.edu.cn.entity.HotSpot;
-import com.nju.edu.cn.entity.HotSpotCacheItem;
 import com.nju.edu.cn.entity.HotSpotEntry;
 import com.nju.edu.cn.entity.HotSpotVO;
 import com.nju.edu.cn.service.*;
@@ -45,12 +44,15 @@ public class HotspotServiceImpl implements HotspotService {
 
         //获取源数据
         log.info("获取热点源数据中......");
-        JSONObject sourceDataObject = JsonUtil.strToJson(sourceHotData.getHotDataByStation(station));
+        String source = sourceHotData.getHotDataByStation(station);
+        if(source == null){
+            return null;
+        }
+        JSONObject sourceDataObject = JsonUtil.strToJson(source);
 
         HotSpotVO hotSpotVO = sourceHotData.generateHotSpotVO(sourceDataObject);
 
         log.info("站点 " + station + " 的热门条目共有 " + hotSpotVO.getHotSpotEntryVOList().size() + " 个");
-
 
 
         HotSpot hotSpot  = new HotSpot();

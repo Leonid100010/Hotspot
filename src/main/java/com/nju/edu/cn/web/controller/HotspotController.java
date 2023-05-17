@@ -1,5 +1,6 @@
 package com.nju.edu.cn.web.controller;
 
+import com.nju.edu.cn.entity.HotSpot;
 import com.nju.edu.cn.service.HotspotService;
 import com.nju.edu.cn.web.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,10 @@ public class HotspotController {
      */
     @GetMapping("/getHotSpot")
     public Response getHotSpot(@RequestParam("station") String station){
-
-        return Response.buildSuccess(hotspotService.getHotSpotByStation(station));
+        HotSpot hotSpot = hotspotService.getHotSpotByStation(station);
+        if(hotSpot == null){
+            return Response.buildFailed("11111","查询失败");
+        }
+        return Response.buildSuccess(hotSpot);
     }
 }
