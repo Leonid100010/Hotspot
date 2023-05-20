@@ -7,7 +7,8 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 /**
- * okhttp忽略安全证书
+ * okhttp 绕过https安全验证
+ *
  */
 public class SSLSocketClient {
 

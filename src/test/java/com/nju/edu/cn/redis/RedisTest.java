@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.concurrent.TimeUnit;
+
 @SpringBootTest
 public class RedisTest {
 
@@ -13,6 +15,9 @@ public class RedisTest {
 
     @Test
     public void stringTest(){
-        stringRedisTemplate.opsForValue().set("testByWff", "1");
+
+        stringRedisTemplate.opsForValue().set("testByWff", "1", 100, TimeUnit.SECONDS);
+        System.out.println(stringRedisTemplate.opsForValue().getOperations().getExpire("testByWff"));
     }
+
 }

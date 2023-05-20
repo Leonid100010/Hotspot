@@ -1,7 +1,7 @@
 package com.nju.edu.cn.service.serviceImpl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.nju.edu.cn.cache.HotSpotCache;
+import com.nju.edu.cn.service.cache.HotSpotCache;
 import com.nju.edu.cn.entity.HotSpot;
 import com.nju.edu.cn.entity.HotSpotEntry;
 import com.nju.edu.cn.entity.HotSpotVO;
@@ -42,6 +42,20 @@ public class HotspotServiceImpl implements HotspotService {
         }
         log.info("站点 " + station + " 缓存未命中");
 
+        HotSpot hotSpot = buildHotSpot(station);
+
+        //加入缓存
+        hotSpotCache.setHotSpotCache(hotSpot, station);
+
+        return hotSpot;
+    }
+
+    /**
+     * 核心业务逻辑：获取源数据 -》翻译 -》情绪分析 -》构建对象
+     * @param station
+     * @return
+     */
+    public HotSpot buildHotSpot(String station){
         //获取源数据
         log.info("获取热点源数据中......");
         String source = sourceHotData.getHotDataByStation(station);
@@ -88,9 +102,11 @@ public class HotspotServiceImpl implements HotspotService {
 
         log.info("站点： " + station + " 分析结束");
 
-        //加入缓存
-        hotSpotCache.setHotSpotCache(hotSpot, station);
-
         return hotSpot;
+    }
+
+    public void hotSpotRefresh(String station){
+
+        hotSpotCache.setHotSpotCache(buildHotSpot(station),station);
     }
 }

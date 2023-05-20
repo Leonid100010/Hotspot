@@ -8,19 +8,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HotSpotCacheItem {
-    /**
-     * 网站
-     */
+
     private String station;
 
-    /**
-     * 网站描述
-     */
     private String desc;
 
-    /**
-     * 热门更新时间
-     */
     private String updateTime;
 
     private Double avgPos;

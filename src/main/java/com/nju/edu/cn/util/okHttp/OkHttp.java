@@ -18,13 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 这里用到了一个实现网络请求的类库okhttp
- * 方法也很简单
+ * 使用类库okhttp实现网络请求
  */
 public class OkHttp {
 
     /**
-     * get方法，很简单
+     * get方法，考虑
      * @param url
      * @return
      */
