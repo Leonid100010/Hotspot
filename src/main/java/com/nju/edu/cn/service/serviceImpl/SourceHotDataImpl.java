@@ -30,6 +30,7 @@ public class SourceHotDataImpl implements SourceHotData {
         stationUrls.put("zhihu", "https://api.vvhan.com/api/hotlist?type=zhihuHot");
 
         if(stationUrls.containsKey(station)){
+            //TODO: 响应时间太长，需要处理异常
             return OkHttp.get(stationUrls.get(station));
         }
         return null;

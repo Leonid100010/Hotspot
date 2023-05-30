@@ -23,8 +23,10 @@ public class CacheRefresh {
     HotspotService hotspotService;
     SourceHotData sourceHotData;
 
-
-    private static final String update_time = "update_time";
+    /**
+     * redis中map结构中的键
+     */
+    private static final String update_time = "updateTime";
 
     @Autowired
     public CacheRefresh(CommonCacheService commonCacheService, SourceHotData sourceHotData,
@@ -41,7 +43,7 @@ public class CacheRefresh {
         boolean hasRe2 = Boolean.TRUE.equals( commonCacheService.hasKey(key2));
 
 
-        if( !hasRe1 && !hasRe2){
+        if( !hasRe1 && !hasRe2 ){
             //两份副本都不存在
             refresh(station);
         }else if(checkExpiring(station) == 1){
@@ -73,24 +75,25 @@ public class CacheRefresh {
     private int checkUpdateTime(String station){
         //获取源数据
         String currHotSpotData = sourceHotData.getHotDataByStation(station);
-        String currTime = JsonUtil.strToJson(currHotSpotData).getString(update_time);
+        String currTime = JsonUtil.strToJson(currHotSpotData).getString("update_time");
         String cacheTime ;
 
         Map<Object, Object> map1 = commonCacheService.getMap(STATION_KEY + REPLICA_1 + station);
         Map<Object, Object> map2 = commonCacheService.getMap(STATION_KEY + REPLICA_2 + station);
 
 
-        if(map1 != null && map2 != null){
+        if(!map1.isEmpty() && !map2.isEmpty()){
             cacheTime = TimeUtil.compare((String) map1.get(update_time), (String) map2.get(update_time)) == 1? (String) map2.get(update_time): (String) map1.get(update_time);
-        }else if(map1 != null){
+        }else if(!map1.isEmpty()){
             cacheTime = (String) map1.get(update_time);
-        }else if(map2 != null){
+        }else if(!map2.isEmpty()){
             cacheTime = (String) map2.get(update_time);
         }else{
             log.error("Both replicas are out of time. ");
             return -1;
         }
-
+        log.info("cacheTime:" + cacheTime);
+        log.info("currTime: " + currTime);
         return TimeUtil.compare(cacheTime, currTime) == 1? 1: 0;
 
     }

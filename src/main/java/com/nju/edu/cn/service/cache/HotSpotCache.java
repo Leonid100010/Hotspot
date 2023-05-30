@@ -99,7 +99,8 @@ public class HotSpotCache {
      * @param hotSpot
      */
     public void setHotSpotCache(HotSpot hotSpot, String station){
-        if(!commonCacheService.hasKey(STATION_KEY + REPLICA_1 + station)){
+        if(!commonCacheService.hasKey(STATION_KEY + REPLICA_1 + station) ||
+                !commonCacheService.hasKey(STATION_ENTRY_LIST_KEY + REPLICA_1 + station)){
             //副本1不存在
             setOneHotSpot(hotSpot, station, REPLICA_1);
         }else{
