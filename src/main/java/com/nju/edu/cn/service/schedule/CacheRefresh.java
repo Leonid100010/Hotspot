@@ -47,8 +47,13 @@ public class CacheRefresh {
             //两份副本都不存在
             refresh(station);
         }else if(checkExpiring(station) == 1){
-            //数据快过期了，提前更新
-            refresh(station);
+            if(checkUpdateTime(station) != 1){
+                //数据快过期了但是数据还不需要更新，延长过期时间
+                refreshExpire(station);
+            }else{
+                //数据快过期了，提前更新
+                refresh(station);
+            }
         }else if(checkUpdateTime(station) == 1){
             //数据已经旧了
             refresh(station);
