@@ -1,23 +1,26 @@
-package com.nju.edu.cn.service.cache;
+package com.nju.edu.cn.service.cache.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nju.edu.cn.service.cache.RedisService;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author: hwang
+ * @date: 2023/8/17 23:53
+ * @description:
+ */
 @Service
-public class CommonCacheService {
+public class RedisServiceImpl implements RedisService {
 
     private static final TimeUnit timeUnit = TimeUnit.MINUTES;
 
+    @Resource
     StringRedisTemplate stringRedisTemplate;
 
-    @Autowired
-    public CommonCacheService(StringRedisTemplate stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
-    }
 
     public boolean hasKey(String key){
         return Boolean.TRUE.equals(stringRedisTemplate.hasKey(key));

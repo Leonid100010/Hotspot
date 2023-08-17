@@ -27,7 +27,7 @@ public class HotspotMockController {
     public Response getHotSpot(@RequestParam("station") String station){
         HotSpot res = hotspotMockService.generateHotSpot(station);
 
-        return new Response("200", "success", res);
+        return Response.buildSuccess(res);
     }
 
 }

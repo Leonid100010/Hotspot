@@ -2,7 +2,7 @@ package com.nju.edu.cn.service.schedule;
 
 import com.nju.edu.cn.service.HotspotService;
 import com.nju.edu.cn.service.SourceHotData;
-import com.nju.edu.cn.service.cache.CommonCacheService;
+import com.nju.edu.cn.service.cache.RedisService;
 import com.nju.edu.cn.util.JsonUtil;
 import com.nju.edu.cn.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +17,10 @@ import static com.nju.edu.cn.service.cache.RedisConstants.*;
 @Service
 public class CacheRefresh {
 
-    CommonCacheService commonCacheService;
-
+    RedisService redisService;
 
     HotspotService hotspotService;
+
     SourceHotData sourceHotData;
 
     /**
@@ -29,9 +29,9 @@ public class CacheRefresh {
     private static final String update_time = "updateTime";
 
     @Autowired
-    public CacheRefresh(CommonCacheService commonCacheService, SourceHotData sourceHotData,
+    public CacheRefresh(RedisService redisService, SourceHotData sourceHotData,
                         HotspotService hotspotService) {
-        this.commonCacheService = commonCacheService;
+        this.redisService = redisService;
         this.sourceHotData = sourceHotData;
         this.hotspotService = hotspotService;
     }
@@ -39,8 +39,8 @@ public class CacheRefresh {
     public void refreshStationCache(String station){
         String key1 = STATION_KEY + REPLICA_1 + station;
         String key2 = STATION_KEY + REPLICA_2 + station;
-        boolean hasRe1 =Boolean.TRUE.equals( commonCacheService.hasKey(key1));
-        boolean hasRe2 = Boolean.TRUE.equals( commonCacheService.hasKey(key2));
+        boolean hasRe1 =Boolean.TRUE.equals( redisService.hasKey(key1));
+        boolean hasRe2 = Boolean.TRUE.equals( redisService.hasKey(key2));
 
 
         if( !hasRe1 && !hasRe2 ){
@@ -83,8 +83,8 @@ public class CacheRefresh {
         String currTime = JsonUtil.strToJson(currHotSpotData).getString("update_time");
         String cacheTime ;
 
-        Map<Object, Object> map1 = commonCacheService.getMap(STATION_KEY + REPLICA_1 + station);
-        Map<Object, Object> map2 = commonCacheService.getMap(STATION_KEY + REPLICA_2 + station);
+        Map<Object, Object> map1 = redisService.getMap(STATION_KEY + REPLICA_1 + station);
+        Map<Object, Object> map2 = redisService.getMap(STATION_KEY + REPLICA_2 + station);
 
 
         if(!map1.isEmpty() && !map2.isEmpty()){
@@ -110,8 +110,8 @@ public class CacheRefresh {
      * @return
      */
     private int checkExpiring(String station){
-        Long leftTime1 = commonCacheService.getExpire(STATION_KEY + REPLICA_1 + station);
-        Long leftTime2 = commonCacheService.getExpire(STATION_KEY + REPLICA_2 + station);
+        Long leftTime1 = redisService.getExpire(STATION_KEY + REPLICA_1 + station);
+        Long leftTime2 = redisService.getExpire(STATION_KEY + REPLICA_2 + station);
 
         if(leftTime1 != -2 && leftTime2 != -2){
             //如果两份副本都快过期
@@ -133,11 +133,11 @@ public class CacheRefresh {
      * @param station
      */
     private void refreshExpire(String station){
-        if(commonCacheService.hasKey(STATION_KEY + REPLICA_1 + station)){
-            commonCacheService.expire(STATION_KEY + REPLICA_1 + station, CACHE_STATION_TTL);
+        if(redisService.hasKey(STATION_KEY + REPLICA_1 + station)){
+            redisService.expire(STATION_KEY + REPLICA_1 + station, CACHE_STATION_TTL);
         }
-        if(commonCacheService.hasKey(STATION_KEY + REPLICA_2 + station)){
-            commonCacheService.expire(STATION_KEY + REPLICA_2 + station,CACHE_STATION_TTL);
+        if(redisService.hasKey(STATION_KEY + REPLICA_2 + station)){
+            redisService.expire(STATION_KEY + REPLICA_2 + station,CACHE_STATION_TTL);
         }
     }
 }

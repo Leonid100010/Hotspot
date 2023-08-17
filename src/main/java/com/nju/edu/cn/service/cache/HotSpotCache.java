@@ -24,67 +24,68 @@ import static com.nju.edu.cn.service.cache.RedisConstants.*;
 @Service
 public class HotSpotCache {
 
-    CommonCacheService commonCacheService;
+    RedisService redisService;
 
     @Autowired
-    public HotSpotCache(CommonCacheService commonCacheService) {
-        this.commonCacheService = commonCacheService;
+    public HotSpotCache(RedisService redisService) {
+        this.redisService = redisService;
     }
 
     /**
      * 缓存中是否存在该站点的热门信息
-     * @param station
+     * @param station 站点名称
      * @return
      */
     public HotSpot exist(String station){
 
-        if(!commonCacheService.hasKey(STATION_KEY + REPLICA_1 + station)
-                && !commonCacheService.hasKey(STATION_KEY + REPLICA_2 + station)){
-            //缓存中不存在该站点
-            //TODO: 缓存穿透问题
+        if(!redisService.hasKey(STATION_KEY + REPLICA_1 + station)
+                && !redisService.hasKey(STATION_KEY + REPLICA_2 + station)){
+            // 缓存中不存在该站点
+            // TODO: 缓存穿透问题
             return null;
-        }else if(!commonCacheService.hasKey(STATION_KEY + REPLICA_1 + station)){
-            //return replica2
-            return exitOne(station,REPLICA_2);
-        }else if(!commonCacheService.hasKey(STATION_KEY + REPLICA_2 + station)){
-            //return replica1
-            return exitOne(station, REPLICA_1);
+        }
+        if(!redisService.hasKey(STATION_KEY + REPLICA_1 + station)){
+            // return replica2
+            return existOne(station,REPLICA_2);
+        }
+        if(!redisService.hasKey(STATION_KEY + REPLICA_2 + station)){
+            // return replica1
+            return existOne(station, REPLICA_1);
+        }
+        // 选择update_time 更近的返回
+        Map<Object, Object> map1 = redisService.getMap(STATION_KEY + REPLICA_1 + station);
+        Map<Object, Object> map2 = redisService.getMap(STATION_KEY + REPLICA_2 + station);
+        if(map1 != null && map2 != null){
+            if(TimeUtil.compare((String) map1.get("update_time"), (String) map2.get("update_time")) == 1){
+                //replica2更近
+                return existOne(station, REPLICA_2);
+            }else {
+                return existOne(station, REPLICA_1);
+            }
         }else{
-            //选择update_time 更近的返回
-            Map<Object, Object> map1 = commonCacheService.getMap(STATION_KEY + REPLICA_1 + station);
-            Map<Object, Object> map2 = commonCacheService.getMap(STATION_KEY + REPLICA_2 + station);
-            if(map1 != null && map2 != null){
-                if(TimeUtil.compare((String) map1.get("update_time"), (String) map2.get("update_time")) == 1){
-                    //replica2更近
-                    return exitOne(station, REPLICA_2);
-                }else {
-                    return exitOne(station, REPLICA_1);
+            // TODO: 下面的判断仅为了防止出现：
+            // 在54行：getMap的过程中某个副本过期了，大概率是副本2过期，那么会导致的空指针问题。
+            if(map1 == null){
+                if(map2 == null){
+                    return null;
+                }else{
+                    return existOne(station, REPLICA_2);
                 }
             }else{
-                //下面的判断仅仅为了防止出现：
-                //在54行：getMap的过程中某个副本过期了，大概率是副本2过期，那么会导致的空指针问题。
-                if(map1 == null){
-                    if(map2 == null){
-                        return null;
-                    }else{
-                        return exitOne(station, REPLICA_2);
-                    }
-                }else{
-                    return exitOne(station, REPLICA_1);
-                }
+                return existOne(station, REPLICA_1);
             }
         }
 
     }
 
-    public HotSpot exitOne(String station, String replica){
+    public HotSpot existOne(String station, String replica){
         HotSpotCacheItem hotSpotCacheItem = getHotSpotCacheItem(STATION_KEY + replica + station);
 
-        if(!commonCacheService.hasKey(hotSpotCacheItem.getHotSpotEntryListId())) {
+        if(!redisService.hasKey(hotSpotCacheItem.getHotSpotEntryListId())) {
             return null;
         }
         //获取HotSpotEntryList
-        String hotSpotEntryListJson = commonCacheService.getString(hotSpotCacheItem.getHotSpotEntryListId());
+        String hotSpotEntryListJson = redisService.getString(hotSpotCacheItem.getHotSpotEntryListId());
 
         List<HotSpotEntry> hotSpotEntryList = JSONUtil.toList(hotSpotEntryListJson, HotSpotEntry.class);
         //构建HotSpot对象
@@ -99,8 +100,8 @@ public class HotSpotCache {
      * @param hotSpot
      */
     public void setHotSpotCache(HotSpot hotSpot, String station){
-        if(!commonCacheService.hasKey(STATION_KEY + REPLICA_1 + station) ||
-                !commonCacheService.hasKey(STATION_ENTRY_LIST_KEY + REPLICA_1 + station)){
+        if(!redisService.hasKey(STATION_KEY + REPLICA_1 + station) ||
+                !redisService.hasKey(STATION_ENTRY_LIST_KEY + REPLICA_1 + station)){
             //副本1不存在
             setOneHotSpot(hotSpot, station, REPLICA_1);
         }else{
@@ -125,22 +126,21 @@ public class HotSpotCache {
                         .setIgnoreNullValue(true)
                         .setFieldValueEditor((fieldName, fieldValue) -> fieldValue.toString()));
 
-
-        commonCacheService.putMap(STATION_KEY +replica + station, stationMap);
+        redisService.putMap(STATION_KEY +replica + station, stationMap);
         //过期时间: 30min
-        commonCacheService.expire(STATION_KEY + replica + station, CACHE_STATION_TTL);
+        redisService.expire(STATION_KEY + replica + station, CACHE_STATION_TTL);
 
         //存储hotSpotEntryList
-        commonCacheService.putString(STATION_ENTRY_LIST_KEY + replica + station, JSONUtil.toJsonStr(hotSpot.getHotSpotEntryList()),
+        redisService.putString(STATION_ENTRY_LIST_KEY + replica + station, JSONUtil.toJsonStr(hotSpot.getHotSpotEntryList()),
                 CACHE_STATION_TTL );
 
     }
 
 
     public HotSpotCacheItem getHotSpotCacheItem(String key){
-        Map<Object, Object> stationMap = commonCacheService.getMap(key);
+        Map<Object, Object> stationMap = redisService.getMap(key);
 
-        return BeanUtil.fillBeanWithMap(stationMap,new HotSpotCacheItem(),false);
+        return BeanUtil.fillBeanWithMap(stationMap, new HotSpotCacheItem(),false);
 
     }
 

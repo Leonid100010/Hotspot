@@ -1,11 +1,14 @@
-package com.nju.edu.cn.service.serviceImpl;
+package com.nju.edu.cn.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.nju.edu.cn.common.enums.RunErrorCodeEnum;
+import com.nju.edu.cn.common.exception.BaseException;
 import com.nju.edu.cn.service.cache.HotSpotCache;
 import com.nju.edu.cn.entity.HotSpot;
 import com.nju.edu.cn.entity.HotSpotEntry;
 import com.nju.edu.cn.entity.HotSpotVO;
 import com.nju.edu.cn.service.*;
+import com.nju.edu.cn.service.validate.StationValidator;
 import com.nju.edu.cn.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +37,15 @@ public class HotspotServiceImpl implements HotspotService {
 
     @Override
     public HotSpot getHotSpotByStation(String station) {
-        //检查缓存
+        // 1. 校验站点
+        if(!StationValidator.valid(station)){
+            throw new BaseException(RunErrorCodeEnum.COMMON_PARAM_ERROR, "invalid station");
+        }
+
+        // 2. 缓存查询
         HotSpot hotSpotCa = hotSpotCache.exist(station);
         if(hotSpotCa != null){
-            log.info("站点 " + station + " 缓存命中!");
+            log.info("站点 " + station + " 缓存命中");
             return hotSpotCa;
         }
         log.info("站点 " + station + " 缓存未命中");
@@ -57,7 +65,7 @@ public class HotspotServiceImpl implements HotspotService {
      */
     public HotSpot buildHotSpot(String station){
         //获取源数据
-        log.info("获取热点源数据中......");
+        log.info(String.format("获取热点源数据中......, station: %s", station));
         String source = sourceHotData.getHotDataByStation(station);
         if(source == null){
             return null;

@@ -13,22 +13,22 @@ public class Response {
     private String msg;
     private Object result;
 
+    private Boolean success;
+
     public Response(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
     public static Response buildSuccess(Object result) {
-        return new Response("00000", "Success", result);
+        return new Response("00000", "Success", result, Boolean.TRUE);
     }
 
-    public static Response buildSuccess() {return new Response("00000", "Success", "操作成功");};
-
     public static Response buildFailed(String code, RuntimeException e) {
-        return new Response(code, e.getLocalizedMessage(), null);
+        return new Response(code, e.getLocalizedMessage(), null, Boolean.FALSE);
     }
 
     public static Response buildFailed(String code, String msg) {
-        return new Response(code, msg, null);
+        return new Response(code, msg, null, Boolean.FALSE);
     }
 }

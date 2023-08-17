@@ -1,14 +1,14 @@
-package com.nju.edu.cn.service.serviceImpl;
+package com.nju.edu.cn.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.nju.edu.cn.common.enums.StationEnum;
 import com.nju.edu.cn.entity.HotSpotEntryVO;
 import com.nju.edu.cn.entity.HotSpotVO;
 import com.nju.edu.cn.service.SourceHotData;
 import com.nju.edu.cn.util.okHttp.OkHttp;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -23,15 +23,9 @@ public class SourceHotDataImpl implements SourceHotData {
     @Override
     public String getHotDataByStation(String station) {
 
-        HashMap<String , String > stationUrls = new HashMap<>();
-        stationUrls.put("baidu", "https://api.vvhan.com/api/hotlist?type=baiduRD");
-        stationUrls.put("bilibili", "https://api.vvhan.com/api/hotlist?type=bili");
-        stationUrls.put("weibo", "https://api.vvhan.com/api/hotlist?type=wbHot");
-        stationUrls.put("zhihu", "https://api.vvhan.com/api/hotlist?type=zhihuHot");
-
-        if(stationUrls.containsKey(station)){
+        if( null != StationEnum.of(station)){
             //TODO: 响应时间太长，需要处理异常
-            return OkHttp.get(stationUrls.get(station));
+            return OkHttp.get(StationEnum.of(station).getUrl());
         }
         return null;
     }
