@@ -35,6 +35,10 @@ public class RedisServiceImpl implements RedisService {
                 value, timeout, timeUnit);
     }
 
+    public void putString(String key, String value){
+        stringRedisTemplate.opsForValue().set(key, value);
+    }
+
     public Map<Object, Object> getMap(String key){
         return stringRedisTemplate.opsForHash().entries(key);
     }

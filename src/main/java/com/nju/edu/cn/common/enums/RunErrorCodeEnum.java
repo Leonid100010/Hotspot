@@ -15,8 +15,9 @@ public enum RunErrorCodeEnum implements ErrorCodeEnum {
     COMMON_SYSTEM_ERROR("A0001", "common system error"),
 
     /**
-     * TODO cache异常
+     * cache异常
      */
+    CACHE_NO_STATION_LIST("A1000", "the entry list of station cache does not exist"),
 
     ;
 

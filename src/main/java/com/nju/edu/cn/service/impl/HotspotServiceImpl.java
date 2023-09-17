@@ -49,10 +49,10 @@ public class HotspotServiceImpl implements HotspotService {
             return hotSpotCa;
         }
         log.info("站点 " + station + " 缓存未命中");
-
+        // 3. 构建数据
         HotSpot hotSpot = buildHotSpot(station);
 
-        //加入缓存
+        // 4. 加入缓存
         hotSpotCache.setHotSpotCache(hotSpot, station);
 
         return hotSpot;

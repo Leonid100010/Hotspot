@@ -37,31 +37,19 @@ public class CacheRefresh {
     }
 
     public void refreshStationCache(String station){
-        String key1 = STATION_KEY + REPLICA_1 + station;
-        String key2 = STATION_KEY + REPLICA_2 + station;
-        boolean hasRe1 =Boolean.TRUE.equals( redisService.hasKey(key1));
-        boolean hasRe2 = Boolean.TRUE.equals( redisService.hasKey(key2));
+        String stationKey = STATION_KEY + station;
+        String stationEntryListKey = STATION_ENTRY_LIST_KEY + station;
 
+        boolean hasCache =Boolean.TRUE.equals( redisService.hasKey(stationKey))
+                    && Boolean.TRUE.equals(redisService.hasKey(stationEntryListKey));
 
-        if( !hasRe1 && !hasRe2 ){
-            //两份副本都不存在
+        if( !hasCache ){
+            // 缓存不存在
             refresh(station);
-        }else if(checkExpiring(station) == 1){
-            if(checkUpdateTime(station) != 1){
-                //数据快过期了但是数据还不需要更新，延长过期时间
-                refreshExpire(station);
-            }else{
-                //数据快过期了，提前更新
-                refresh(station);
-            }
         }else if(checkUpdateTime(station) == 1){
-            //数据已经旧了
+            // 数据已经旧了
             refresh(station);
-        }else {
-            //延长过期时间
-            refreshExpire(station);
         }
-
     }
 
     /**
@@ -78,66 +66,15 @@ public class CacheRefresh {
      * @return 1：已经过时，需要更新缓存；0：不需要；-1：报错
      */
     private int checkUpdateTime(String station){
-        //获取源数据
+        // 获取源数据
         String currHotSpotData = sourceHotData.getHotDataByStation(station);
         String currTime = JsonUtil.strToJson(currHotSpotData).getString("update_time");
-        String cacheTime ;
 
-        Map<Object, Object> map1 = redisService.getMap(STATION_KEY + REPLICA_1 + station);
-        Map<Object, Object> map2 = redisService.getMap(STATION_KEY + REPLICA_2 + station);
+        Map<Object, Object> map = redisService.getMap(STATION_KEY + station);
+        String cacheTime  = (String) map.get(update_time);
 
-
-        if(!map1.isEmpty() && !map2.isEmpty()){
-            cacheTime = TimeUtil.compare((String) map1.get(update_time), (String) map2.get(update_time)) == 1? (String) map2.get(update_time): (String) map1.get(update_time);
-        }else if(!map1.isEmpty()){
-            cacheTime = (String) map1.get(update_time);
-        }else if(!map2.isEmpty()){
-            cacheTime = (String) map2.get(update_time);
-        }else{
-            log.error("Both replicas are out of time. ");
-            return -1;
-        }
         log.info("cacheTime:" + cacheTime);
         log.info("currTime: " + currTime);
         return TimeUtil.compare(cacheTime, currTime) == 1? 1: 0;
-
-    }
-
-
-    /**
-     * 检测缓存是否即将过期
-     * @param station
-     * @return
-     */
-    private int checkExpiring(String station){
-        Long leftTime1 = redisService.getExpire(STATION_KEY + REPLICA_1 + station);
-        Long leftTime2 = redisService.getExpire(STATION_KEY + REPLICA_2 + station);
-
-        if(leftTime1 != -2 && leftTime2 != -2){
-            //如果两份副本都快过期
-            if(leftTime1 < 20 && leftTime2 < 20){
-                return 1;
-            }else return 0;
-        }else if(leftTime1 != -2){
-            return leftTime1 < 20? 1:0;
-        }else if(leftTime2 != -2){
-            return leftTime2 < 20? 1:0;
-        }else{
-            log.error("Both replicas are out of time. ");
-            return -1;
-        }
-    }
-
-    /**
-     * 刷新key的过期时间
-     * @param station
-     */
-    private void refreshExpire(String station){
-        if(redisService.hasKey(STATION_KEY + REPLICA_1 + station)){
-            redisService.expire(STATION_KEY + REPLICA_1 + station, CACHE_STATION_TTL);
-        }
-        if(redisService.hasKey(STATION_KEY + REPLICA_2 + station)){
-            redisService.expire(STATION_KEY + REPLICA_2 + station,CACHE_STATION_TTL);
-        }
     }
 }
